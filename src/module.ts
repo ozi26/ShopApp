@@ -5,8 +5,9 @@ const cors = require("cors");
 const { json, urlencoded } = require("body-parser");
 const cookieSession = require("cookie-session");
 const mongoose = require("mongoose");
-import { errorHandler } from "@mainshopapp/common";
+import { errorHandler , currentUser } from "@mainshopapp/common";
 import { authRouter } from "./Auth/auth.routers";
+import { sellerRouters } from "./seller/seller.router";
 const morgan = require("morgan");
 
 class AppModule {
@@ -30,13 +31,6 @@ class AppModule {
         secure: false,
       }));
 
-
-    // ====================== Routers ======================
-
-    app.use(morgan("dev"));
-    app.use(authRouter);
-    app.use(errorHandler as any); // errorHandler is an error-handling middleware; cast to any to satisfy TypeScript overloads
-    
     Object.setPrototypeOf(this, AppModule.prototype);
   }
 
@@ -60,6 +54,15 @@ class AppModule {
     } catch (err) {
       throw new Error("  database connection error");
     }
+
+     // ====================== Routers ======================
+
+    this.app.use(morgan("dev"));
+    this.app.use(currentUser(process.env.JWT_KEY!) as any);
+    this.app.use(authRouter);
+    this.app.use(sellerRouters)
+    this.app.use(errorHandler as any); // errorHandler is an error-handling middleware; cast to any to satisfy TypeScript overloads
+    
 
     const PORT = process.env.PORT;
 
