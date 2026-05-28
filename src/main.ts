@@ -8,6 +8,10 @@ declare global {
     export interface Request {
       currentUser?: JwtPayload ;
       uploaderError?: Error;
+      session?: {
+                cartId?: string;
+                [key: string]: any;
+            }
     }
   }
 }
