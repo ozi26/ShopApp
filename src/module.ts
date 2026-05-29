@@ -8,6 +8,7 @@ const mongoose = require("mongoose");
 import { errorHandler , currentUser } from "@mainshopapp/common";
 import { authRouter } from "./Auth/auth.routers";
 import { sellerRouters } from "./seller/seller.router";
+import { buyerRouters } from "./buyer/buyer.routers";
 const morgan = require("morgan");
 
 class AppModule {
@@ -60,11 +61,12 @@ class AppModule {
     this.app.use(morgan("dev"));
     this.app.use(currentUser(process.env.JWT_KEY!) as any);
     this.app.use(authRouter);
-    this.app.use(sellerRouters)
+    this.app.use(sellerRouters);
+    this.app.use(buyerRouters);
     this.app.use(errorHandler as any); // errorHandler is an error-handling middleware; cast to any to satisfy TypeScript overloads
     
 
-    const PORT = process.env.PORT;
+    const PORT = process.env.PORT || 8080;
 
     this.app.listen(PORT, () =>
       console.log("🔸 Server is running on port: " + PORT),
